@@ -3,6 +3,8 @@ name = "comp_state_seed_extras"
 version = "0.0.1"
 authors = ["rebo <rebotfc@gmail.com>"]
 edition = "2018"
+description = "helpers for seed"
+license = "Apache-2.0 OR MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
