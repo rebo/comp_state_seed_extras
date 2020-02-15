@@ -1,9 +1,9 @@
-use comp_state::{topo, use_state, CloneState};
+use comp_state::{topo, use_state, CloneState, StateAccess};
 use seed::{prelude::*, *};
 use std::cell::RefCell;
 use std::rc::Rc;
 use wasm_bindgen::JsCast;
-use web_sys;
+
 pub fn request_animation_frame(f: &Closure<dyn FnMut(f64)>) {
     window()
         .request_animation_frame(f.as_ref().unchecked_ref())

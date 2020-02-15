@@ -1,6 +1,5 @@
 use comp_state::StateAccess;
 use seed::prelude::*;
-use web_sys;
 
 pub trait StateAccessEventHandlers<T>
 where
