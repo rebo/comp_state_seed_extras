@@ -23,13 +23,35 @@ pub fn get_html_element_by_id(id: &str) -> Option<web_sys::HtmlElement> {
 }
 
 #[topo::nested]
-pub fn after_render<F: Fn() -> () + 'static>(rerun: bool, func: F) {
-    let already_triggered = use_state(|| false);
-    if rerun {
-        already_triggered.set(false);
-    } else if already_triggered.get() {
+pub fn after_render_deps<F: Fn() -> () + 'static>(
+    dependencies: &[impl StateChangedTrait],
+    func: F,
+) {
+    if dependencies
+        .iter()
+        .all(|dependency| !dependency.state_changed())
+    {
         return;
     }
+
+    let f = Rc::new(RefCell::new(None));
+    let g = f.clone();
+
+    // let mut i = 0;
+    *g.borrow_mut() = Some(Closure::wrap(Box::new(move |_| {
+        func();
+        f.borrow_mut().take();
+    }) as Box<dyn FnMut(f64)>));
+    request_animation_frame(g.borrow().as_ref().unwrap());
+}
+
+#[topo::nested]
+pub fn after_render_once<F: Fn() -> () + 'static>(func: F) {
+    let already_triggered = use_state(|| false);
+    if already_triggered.get() {
+        return;
+    }
+
     already_triggered.set(true);
     let f = Rc::new(RefCell::new(None));
     let g = f.clone();
@@ -40,4 +62,37 @@ pub fn after_render<F: Fn() -> () + 'static>(rerun: bool, func: F) {
         f.borrow_mut().take();
     }) as Box<dyn FnMut(f64)>));
     request_animation_frame(g.borrow().as_ref().unwrap());
+}
+
+#[topo::nested]
+pub fn after_render_always<F: Fn() -> () + 'static>(func: F) {
+    let f = Rc::new(RefCell::new(None));
+    let g = f.clone();
+
+    // let mut i = 0;
+    *g.borrow_mut() = Some(Closure::wrap(Box::new(move |_| {
+        func();
+        f.borrow_mut().take();
+    }) as Box<dyn FnMut(f64)>));
+    request_animation_frame(g.borrow().as_ref().unwrap());
+}
+
+pub trait StateChangedTrait {
+    fn state_changed(&self) -> bool;
+}
+
+impl<T> StateChangedTrait for StateAccess<T>
+where
+    T: Clone + PartialEq + 'static,
+{
+    fn state_changed(&self) -> bool {
+        let old_state: StateAccess<Option<T>> = topo::call_in_slot(self.id, || use_state(|| None));
+
+        if Some(self.get()) == old_state.get() {
+            false
+        } else {
+            old_state.set(Some(self.get()));
+            true
+        }
+    }
 }
