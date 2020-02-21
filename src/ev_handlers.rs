@@ -5,13 +5,16 @@ pub trait StateAccessEventHandlers<T>
 where
     T: 'static,
 {
-    fn input_ev<F: Fn(&mut T, String) -> () + 'static + Clone, Ms: Default + 'static>(
+    fn input_ev<F: FnOnce(&mut T, String) -> () + 'static + Clone, Ms: Default + 'static>(
         &self,
         event: Ev,
         func: F,
     ) -> seed::EventHandler<Ms>;
 
-    fn mouse_ev<F: Fn(&mut T, web_sys::MouseEvent) -> () + 'static + Clone, Ms: Default + 'static>(
+    fn mouse_ev<
+        F: FnOnce(&mut T, web_sys::MouseEvent) -> () + 'static + Clone,
+        Ms: Default + 'static,
+    >(
         &self,
         event: Ev,
         func: F,
@@ -22,7 +25,7 @@ impl<T> StateAccessEventHandlers<T> for StateAccess<T>
 where
     T: 'static,
 {
-    fn input_ev<F: Fn(&mut T, String) -> () + 'static + Clone, Ms: Default + 'static>(
+    fn input_ev<F: FnOnce(&mut T, String) -> () + 'static + Clone, Ms: Default + 'static>(
         &self,
         event: Ev,
         func: F,
@@ -35,7 +38,7 @@ where
     }
 
     fn mouse_ev<
-        F: Fn(&mut T, web_sys::MouseEvent) -> () + 'static + Clone,
+        F: FnOnce(&mut T, web_sys::MouseEvent) -> () + 'static + Clone,
         Ms: Default + 'static,
     >(
         &self,

@@ -1,6 +1,6 @@
 [package]
 name = "comp_state_seed_extras"
-version = "0.0.7"
+version = "0.0.8"
 authors = ["rebo <rebotfc@gmail.com>"]
 edition = "2018"
 description = "helpers for seed"
