@@ -6,7 +6,10 @@ mod utils;
 
 pub use ev_handlers::StateAccessEventHandlers;
 pub use seed_bind::{bind, UpdateElLocal};
-pub use utils::{after_render, after_render_once, get_html_element_by_id, request_animation_frame};
+pub use utils::{
+    after_render, after_render_once, get_html_element_by_id, handle_drop_types,
+    request_animation_frame,
+};
 
 #[cfg(test)]
 mod tests {

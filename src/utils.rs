@@ -38,3 +38,9 @@ pub fn after_render<F: Fn(f64) -> () + 'static>(func: F) {
 pub fn after_render_once<F: Fn(f64) -> () + 'static + Clone>(func: F) {
     do_once(move || after_render(func.clone()));
 }
+
+pub fn handle_drop_types<Ms>() -> Node<Ms> {
+    comp_state::execute_and_remove_drop_types();
+    comp_state::reset_unseen_id_list();
+    empty![]
+}
